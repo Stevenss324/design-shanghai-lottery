@@ -1,0 +1,929 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Design Shanghai 2026 · 新年签运势</title>
+    <!-- 微信分享JS-SDK -->
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,215,0,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo {
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        /* 开始页 */
+        #startPage .envelope {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .envelope-img {
+            font-size: 150px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* 抽签页 */
+        #drawPage {
+            display: none;
+        }
+
+        .fortune-sticks {
+            width: 250px;
+            height: 250px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .stick {
+            position: absolute;
+            width: 8px;
+            height: 180px;
+            background: linear-gradient(to bottom, #D4AF37, #FFD700);
+            border-radius: 4px;
+            bottom: 20px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .stick:nth-child(1) { left: 80px; }
+        .stick:nth-child(2) { left: 100px; }
+        .stick:nth-child(3) { left: 120px; }
+        .stick:nth-child(4) { left: 140px; }
+        .stick:nth-child(5) { left: 160px; }
+
+        .stick.shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        .stick.picked {
+            transform: translateY(-100px) scale(1.2);
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        /* 结果页 */
+        #resultPage {
+            display: none;
+        }
+
+        .result-icon {
+            font-size: 100px;
+            margin: 20px 0;
+            animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fortune-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .fortune-desc {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .coupon-box {
+            background: linear-gradient(135deg, #FFF5E1 0%, #FFE4B5 100%);
+            border: 2px dashed #D4AF37;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .coupon-label {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .coupon-code {
+            font-size: 28px;
+            font-weight: 700;
+            color: #D4AF37;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .coupon-desc {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .share-tip {
+            background: #F0F7FF;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #667eea;
+            line-height: 1.6;
+        }
+
+        .share-tip strong {
+            color: #764ba2;
+            font-size: 16px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        #startPage .btn-secondary {
+            background: linear-gradient(135deg, #FFF5E1 0%, #FFE4B5 100%);
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+        }
+
+        #startPage .btn-secondary:hover {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: white;
+            border-color: #D4AF37;
+        }
+
+        .btn-primary {
+            flex: 1;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 复制成功提示 */
+        .copy-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .copy-toast.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- 开始页 -->
+            <div id="startPage">
+                <div class="logo">DESIGN SHANGHAI 2026</div>
+                <h1>🧧 新年签运势</h1>
+                <p class="subtitle">马到成功年 · 灵感启新篇</p>
+                
+                <div class="envelope">
+                    <div class="envelope-img">🏮</div>
+                </div>
+                
+                <button class="btn" onclick="startDraw()">抽取新年签</button>
+                
+                <p style="margin-top: 30px; font-size: 14px; color: #999;" id="drawCountText">
+                    抽取属于你的新年福利！
+                </p>
+                
+                <button class="btn btn-secondary" onclick="shareToFriend()" style="margin-top: 20px; padding: 12px 40px; font-size: 16px;">
+                    📤 分享给好友获得额外机会
+                </button>
+            </div>
+
+            <!-- 抽签页 -->
+            <div id="drawPage">
+                <div class="logo">DESIGN SHANGHAI 2026</div>
+                <h1>🎋 摇签中...</h1>
+                <p class="subtitle">好运即将揭晓</p>
+                
+                <div class="fortune-sticks">
+                    <div class="stick"></div>
+                    <div class="stick"></div>
+                    <div class="stick"></div>
+                    <div class="stick"></div>
+                    <div class="stick"></div>
+                </div>
+            </div>
+
+            <!-- 结果页 -->
+            <div id="resultPage">
+                <div class="logo">DESIGN SHANGHAI 2026</div>
+                
+                <div class="result-icon" id="resultIcon">🎉</div>
+                <div class="fortune-title" id="fortuneTitle">大吉</div>
+                <p class="fortune-desc" id="fortuneDesc">马到成功，灵感爆棚！</p>
+                
+                <div class="coupon-box">
+                    <div class="coupon-label">🎁 专属福利</div>
+                    <div class="coupon-code" id="couponCode">HORSE2026</div>
+                    <div class="coupon-desc" id="couponDesc">免费门票 1张</div>
+                </div>
+                
+                <div class="share-tip">
+                    💡 <strong>分享福利：</strong><br>
+                    分享给好友，获取 <strong>+1次抽奖机会</strong><br>
+                    最多可分享给5位好友
+                </div>
+                
+                <!-- 中奖时显示的按钮 -->
+                <div class="btn-group" id="btnGroup1">
+                    <button class="btn btn-secondary" id="copyCodeBtn" onclick="copyCode()">复制优惠码</button>
+                    <button class="btn btn-primary" onclick="buyTicket()">立即购票</button>
+                </div>
+                
+                <!-- 未中奖时显示的按钮 -->
+                <div class="btn-group" id="btnGroup2" style="display: none; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="shareToFriend()" style="flex: 1;">
+                        📤 分享获得机会
+                    </button>
+                    <button class="btn" onclick="restart()" style="flex: 1;">
+                        再抽一次
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © 2026 设计上海 Design Shanghai
+        </div>
+    </div>
+
+    <!-- 复制成功提示 -->
+    <div class="copy-toast" id="copyToast">✓ 已复制优惠码</div>
+
+    <script>
+        // 运势配置（带额度限制）
+        const fortunes = [
+            {
+                level: '大吉',
+                icon: '🎉',
+                desc: '马到成功，灵感爆棚！<br>2026年你将遇见最inspiring的设计',
+                coupon: 'HORSE2026',
+                discount: '免费门票 1张',
+                probability: 0.02,  // 2%
+                quota: 10,  // 总额度
+                used: 0,    // 已使用
+                isWinning: true  // 是否为中奖
+            },
+            {
+                level: '吉',
+                icon: '🧧',
+                desc: '品质生活，从设计开始<br>发现生活中的美好细节',
+                coupon: 'HORSE',
+                discount: '8折购票券',
+                probability: 0.18,  // 18%
+                quota: 200,
+                used: 0,
+                isWinning: true
+            },
+            {
+                level: '小吉',
+                icon: '🌟',
+                desc: '创意萌芽，灵感涌现<br>设计之旅从这里开始',
+                coupon: 'LUCKY',
+                discount: '9折购票券',
+                probability: 0.30,  // 30%
+                quota: 500,
+                used: 0,
+                isWinning: true
+            },
+            {
+                level: '顺',
+                icon: '🎐',
+                desc: '一切顺利，好运在路上<br>再试一次，惊喜就在下一签',
+                coupon: '',
+                discount: '谢谢惠顾',
+                probability: 0.50,  // 50%
+                quota: 999999,  // 无限额度
+                used: 0,
+                isWinning: false  // 非中奖，可以继续抽
+            }
+        ];
+
+        // 从localStorage读取已使用的额度
+        function loadQuotas() {
+            try {
+                const savedQuotas = localStorage.getItem('fortuneQuotas');
+                if (savedQuotas) {
+                    const quotas = JSON.parse(savedQuotas);
+                    fortunes.forEach((fortune, index) => {
+                        if (quotas[index] !== undefined) {
+                            fortune.used = quotas[index];
+                        }
+                    });
+                }
+            } catch (e) {
+                console.log('加载额度失败');
+            }
+        }
+
+        // 保存额度到localStorage
+        function saveQuotas() {
+            try {
+                const quotas = fortunes.map(f => f.used);
+                localStorage.setItem('fortuneQuotas', JSON.stringify(quotas));
+            } catch (e) {
+                console.log('保存额度失败');
+            }
+        }
+
+        // 页面加载时读取额度
+        loadQuotas();
+
+        // 每日抽奖次数管理
+        const DAILY_BASE_DRAWS = 3;  // 每日基础次数
+        const MAX_SHARE_DRAWS = 5;   // 最多分享获得次数
+        
+        let drawCount = {
+            date: '',
+            baseUsed: 0,      // 已使用的基础次数
+            shareUsed: 0,     // 已使用的分享次数
+            shareEarned: 0,   // 已获得的分享次数
+            hasWon: false     // 今日是否已中奖
+        };
+
+        // 加载抽奖次数
+        function loadDrawCount() {
+            try {
+                const saved = localStorage.getItem('drawCount');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    const today = new Date().toDateString();
+                    
+                    // 如果是新的一天，重置次数
+                    if (data.date === today) {
+                        drawCount = data;
+                    } else {
+                        drawCount.date = today;
+                        saveDrawCount();
+                    }
+                } else {
+                    drawCount.date = new Date().toDateString();
+                    saveDrawCount();
+                }
+            } catch (e) {
+                drawCount.date = new Date().toDateString();
+            }
+        }
+
+        // 保存抽奖次数
+        function saveDrawCount() {
+            try {
+                localStorage.setItem('drawCount', JSON.stringify(drawCount));
+            } catch (e) {
+                console.log('保存次数失败');
+            }
+        }
+
+        // 获取剩余次数
+        function getRemainingDraws() {
+            const baseRemaining = DAILY_BASE_DRAWS - drawCount.baseUsed;
+            const shareRemaining = drawCount.shareEarned - drawCount.shareUsed;
+            return baseRemaining + shareRemaining;
+        }
+
+        // 使用一次抽奖机会
+        function useOneDraw() {
+            // 优先使用基础次数
+            if (drawCount.baseUsed < DAILY_BASE_DRAWS) {
+                drawCount.baseUsed++;
+            } else if (drawCount.shareUsed < drawCount.shareEarned) {
+                drawCount.shareUsed++;
+            }
+            saveDrawCount();
+        }
+
+        // 分享获得额外次数
+        function earnShareDraw() {
+            if (drawCount.shareEarned < MAX_SHARE_DRAWS) {
+                drawCount.shareEarned++;
+                saveDrawCount();
+                return true;
+            }
+            return false;
+        }
+
+        // 更新次数显示
+        function updateDrawCountDisplay() {
+            const remaining = getRemainingDraws();
+            const shareEarnable = MAX_SHARE_DRAWS - drawCount.shareEarned;
+            
+            // 在结果页显示
+            const shareTip = document.querySelector('.share-tip');
+            if (shareTip) {
+                if (shareEarnable > 0) {
+                    shareTip.innerHTML = `
+                        💡 <strong>分享福利：</strong><br>
+                        分享给好友，获取 <strong>+1次抽奖机会</strong><br>
+                        今日剩余 <strong>${remaining}次</strong> · 还可分享<strong>${shareEarnable}次</strong>
+                    `;
+                } else {
+                    shareTip.innerHTML = `
+                        💡 <strong>分享福利：</strong><br>
+                        今日剩余 <strong>${remaining}次</strong> · 已达分享上限
+                    `;
+                }
+            }
+        }
+
+        // 页面加载时初始化
+        loadDrawCount();
+        
+        let currentFortune = null;
+
+        // 开始抽签
+        function startDraw() {
+            // 检查是否已中奖
+            if (drawCount.hasWon) {
+                alert('🎉 恭喜您今日已中奖！\n\n每人每天只能中奖一次\n明天再来试试运气吧！');
+                return;
+            }
+            
+            // 检查剩余次数
+            const remaining = getRemainingDraws();
+            if (remaining <= 0) {
+                alert('今日抽奖次数已用完！\n\n分享给好友可获得额外抽奖机会\n（最多分享5位好友）');
+                return;
+            }
+            
+            // 使用一次机会
+            useOneDraw();
+            
+            document.getElementById('startPage').classList.add('hidden');
+            document.getElementById('drawPage').style.display = 'block';
+            
+            // 签筒摇动动画
+            const sticks = document.querySelectorAll('.stick');
+            sticks.forEach(stick => {
+                stick.classList.add('shake');
+            });
+            
+            // 2秒后抽出一根签
+            setTimeout(() => {
+                const randomStick = sticks[Math.floor(Math.random() * sticks.length)];
+                randomStick.classList.remove('shake');
+                randomStick.classList.add('picked');
+                
+                // 再等1秒显示结果
+                setTimeout(() => {
+                    showResult();
+                }, 1000);
+            }, 2000);
+        }
+
+        // 根据概率抽取运势（考虑额度限制）
+        function getRandomFortune() {
+            const random = Math.random();
+            let cumulative = 0;
+            
+            // 先按概率抽取
+            let selectedFortune = null;
+            for (let fortune of fortunes) {
+                cumulative += fortune.probability;
+                if (random <= cumulative) {
+                    selectedFortune = fortune;
+                    break;
+                }
+            }
+            
+            if (!selectedFortune) {
+                selectedFortune = fortunes[fortunes.length - 1];
+            }
+            
+            // 检查额度是否用完
+            if (selectedFortune.used >= selectedFortune.quota) {
+                // 如果抽中的奖品已用完，寻找还有额度的奖品
+                for (let fortune of fortunes) {
+                    if (fortune.used < fortune.quota) {
+                        selectedFortune = fortune;
+                        break;
+                    }
+                }
+            }
+            
+            // 记录使用
+            selectedFortune.used++;
+            saveQuotas();
+            
+            return selectedFortune;
+        }
+
+        // 显示结果
+        function showResult() {
+            currentFortune = getRandomFortune();
+            
+            // 如果中奖，标记为已中奖
+            if (currentFortune.isWinning) {
+                drawCount.hasWon = true;
+                saveDrawCount();
+            }
+            
+            document.getElementById('drawPage').style.display = 'none';
+            document.getElementById('resultPage').style.display = 'block';
+            
+            document.getElementById('resultIcon').textContent = currentFortune.icon;
+            document.getElementById('fortuneTitle').textContent = currentFortune.level;
+            document.getElementById('fortuneDesc').innerHTML = currentFortune.desc;
+            document.getElementById('couponCode').textContent = currentFortune.coupon || '- - -';
+            document.getElementById('couponDesc').textContent = currentFortune.discount;
+            
+            // 根据是否中奖显示不同的按钮
+            const btnGroup1 = document.getElementById('btnGroup1');
+            const btnGroup2 = document.getElementById('btnGroup2');
+            
+            if (currentFortune.isWinning) {
+                // 中奖了，显示购票按钮，隐藏再抽一次
+                btnGroup1.style.display = 'flex';
+                btnGroup2.style.display = 'none';
+                
+                // 隐藏优惠码复制按钮（如果没有优惠码）
+                const copyBtn = document.getElementById('copyCodeBtn');
+                if (!currentFortune.coupon) {
+                    copyBtn.style.display = 'none';
+                } else {
+                    copyBtn.style.display = 'block';
+                }
+            } else {
+                // 未中奖（顺），显示再抽一次
+                btnGroup1.style.display = 'none';
+                btnGroup2.style.display = 'flex';
+            }
+            
+            // 更新剩余次数显示
+            updateDrawCountDisplay();
+        }
+
+        // 复制优惠码
+        function copyCode() {
+            const code = currentFortune.coupon;
+            
+            // 创建临时input元素
+            const input = document.createElement('input');
+            input.value = code;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            
+            // 显示提示
+            const toast = document.getElementById('copyToast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 购票（跳转到购票页面）
+        function buyTicket() {
+            // 跳转到设计上海购票页面，并带上优惠码参数
+            const ticketUrl = 'https://ticket.designshanghai.cn/?f=Baidu&lang=cn&appId=tg8ddf9e4edb76970&referer=https%3A%2F%2Fdesignshanghai.cn%2F';
+            const urlWithCoupon = ticketUrl + '&coupon=' + encodeURIComponent(currentFortune.coupon);
+            
+            // 打开新窗口跳转
+            window.open(urlWithCoupon, '_blank');
+            
+            // 也可以直接在当前窗口跳转，取消上面的代码，使用下面的：
+            // window.location.href = urlWithCoupon;
+        }
+
+        // 重新开始
+        function restart() {
+            // 重置所有页面
+            document.getElementById('resultPage').style.display = 'none';
+            document.getElementById('startPage').classList.remove('hidden');
+            
+            // 重置签筒
+            const sticks = document.querySelectorAll('.stick');
+            sticks.forEach(stick => {
+                stick.classList.remove('shake', 'picked');
+            });
+            
+            // 更新次数显示
+            updateStartPageDrawCount();
+        }
+
+        // 分享给好友
+        function shareToFriend() {
+            const earned = earnShareDraw();
+            if (earned) {
+                // 检测是否在微信环境
+                const isWechat = /micromessenger/i.test(navigator.userAgent);
+                
+                if (isWechat) {
+                    // 在微信中，提示用户点击右上角分享
+                    alert('🎉 分享成功！\n\n已获得 +1 次抽奖机会\n\n请点击右上角「···」按钮\n选择「分享给朋友」或「分享到朋友圈」');
+                    // 微信分享配置已在页面底部的 setupWechatShare() 函数中
+                } else {
+                    // 非微信环境，复制链接
+                    const shareUrl = window.location.href;
+                    copyToClipboard(shareUrl);
+                    alert('🎉 分享成功！\n\n已获得 +1 次抽奖机会\n活动链接已复制到剪贴板\n快去分享给好友吧！');
+                }
+                
+                updateStartPageDrawCount();
+            } else {
+                alert('今日分享次数已达上限（5次）\n明天再来吧！');
+            }
+        }
+
+        // 复制到剪贴板辅助函数
+        function copyToClipboard(text) {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+        }
+
+        // 更新开始页的次数显示
+        function updateStartPageDrawCount() {
+            const remaining = getRemainingDraws();
+            const shareEarnable = MAX_SHARE_DRAWS - drawCount.shareEarned;
+            
+            const drawCountText = document.getElementById('drawCountText');
+            if (drawCountText) {
+                if (drawCount.hasWon) {
+                    drawCountText.innerHTML = `🎉 今日已中奖！<br><span style="color: #999;">每人每天只能中奖一次，明天再来吧</span>`;
+                } else if (remaining > 0) {
+                    drawCountText.innerHTML = `今日剩余 <strong style="color: #667eea;">${remaining}次</strong> 抽奖机会`;
+                    if (shareEarnable > 0) {
+                        drawCountText.innerHTML += `<br>还可通过分享获得<strong style="color: #764ba2;">${shareEarnable}次</strong>额外机会`;
+                    }
+                } else {
+                    drawCountText.innerHTML = `今日次数已用完<br>分享给好友可获得额外机会`;
+                }
+            }
+        }
+
+        // 页面加载时更新显示
+        window.addEventListener('DOMContentLoaded', function() {
+            updateStartPageDrawCount();
+            setupWechatShare();  // 初始化微信分享
+        });
+
+        // ============ 微信分享配置 ============
+        // 配置微信分享功能
+        function setupWechatShare() {
+            // 检测是否在微信环境
+            const isWechat = /micromessenger/i.test(navigator.userAgent);
+            if (!isWechat) return;
+
+            // 微信分享配置
+            const shareConfig = {
+                title: 'Design Shanghai 2026 新年签运势',
+                desc: '抽新年签，赢设计上海门票优惠！马到成功，好运连连！',
+                link: window.location.href,
+                imgUrl: window.location.origin + '/share-image.jpg'  // 需要准备一张分享图片（建议尺寸：300x300）
+            };
+
+            // ⚠️ 注意：微信分享需要后端配合
+            // 1. 需要在微信公众平台配置JS接口安全域名
+            // 2. 需要后端提供签名接口
+            
+            // 以下是完整配置示例，需要替换为实际的后端签名接口
+            /*
+            // 调用后端接口获取微信签名
+            fetch('/api/wechat/signature?url=' + encodeURIComponent(location.href.split('#')[0]))
+                .then(res => res.json())
+                .then(data => {
+                    // 配置微信JS-SDK
+                    wx.config({
+                        debug: false,  // 生产环境设为false
+                        appId: data.appId,  // 公众号的唯一标识
+                        timestamp: data.timestamp,  // 生成签名的时间戳
+                        nonceStr: data.nonceStr,  // 生成签名的随机串
+                        signature: data.signature,  // 签名
+                        jsApiList: [
+                            'updateAppMessageShareData',  // 分享给朋友
+                            'updateTimelineShareData'     // 分享到朋友圈
+                        ]
+                    });
+
+                    wx.ready(function() {
+                        // 分享给朋友
+                        wx.updateAppMessageShareData({
+                            title: shareConfig.title,
+                            desc: shareConfig.desc,
+                            link: shareConfig.link,
+                            imgUrl: shareConfig.imgUrl,
+                            success: function() {
+                                console.log('分享给朋友配置成功');
+                            }
+                        });
+
+                        // 分享到朋友圈
+                        wx.updateTimelineShareData({
+                            title: shareConfig.title,
+                            link: shareConfig.link,
+                            imgUrl: shareConfig.imgUrl,
+                            success: function() {
+                                console.log('分享到朋友圈配置成功');
+                            }
+                        });
+                    });
+
+                    wx.error(function(res) {
+                        console.error('微信JS-SDK配置失败', res);
+                    });
+                })
+                .catch(err => {
+                    console.error('获取微信签名失败', err);
+                });
+            */
+        }
+
+        // 统计数据（可选）
+        function trackEvent(eventName, data) {
+            // 这里可以接入实际的数据统计工具
+            // 例如：百度统计、Google Analytics、友盟等
+            console.log('Event:', eventName, data);
+        }
+
+        // 重置额度（管理员功能，在浏览器控制台执行）
+        // 使用方法：打开浏览器控制台，输入 resetQuotas() 然后按回车
+        function resetQuotas() {
+            fortunes.forEach(f => f.used = 0);
+            saveQuotas();
+            console.log('✓ 额度已重置');
+            alert('额度已重置！');
+        }
+
+        // 查看当前额度（管理员功能）
+        // 使用方法：打开浏览器控制台，输入 checkQuotas() 然后按回车
+        function checkQuotas() {
+            console.log('=== 当前额度情况 ===');
+            fortunes.forEach(f => {
+                const remaining = f.quota - f.used;
+                console.log(`${f.level} (${f.coupon}): ${remaining}/${f.quota} 剩余`);
+            });
+        }
+
+        // 重置每日抽奖次数（管理员功能）
+        function resetDailyDraws() {
+            drawCount = {
+                date: new Date().toDateString(),
+                baseUsed: 0,
+                shareUsed: 0,
+                shareEarned: 0,
+                hasWon: false
+            };
+            saveDrawCount();
+            updateStartPageDrawCount();
+            console.log('✓ 每日次数已重置');
+            alert('每日次数已重置！');
+        }
+
+        // 查看当前抽奖次数情况（管理员功能）
+        function checkDrawCount() {
+            const remaining = getRemainingDraws();
+            const shareEarnable = MAX_SHARE_DRAWS - drawCount.shareEarned;
+            console.log('=== 当前抽奖次数情况 ===');
+            console.log(`日期: ${drawCount.date}`);
+            console.log(`基础次数: ${drawCount.baseUsed}/${DAILY_BASE_DRAWS} 已用`);
+            console.log(`分享获得: ${drawCount.shareEarned}/${MAX_SHARE_DRAWS} 次`);
+            console.log(`分享已用: ${drawCount.shareUsed}/${drawCount.shareEarned} 次`);
+            console.log(`剩余次数: ${remaining} 次`);
+            console.log(`还可分享: ${shareEarnable} 次`);
+        }
+    </script>
+</body>
+</html>
